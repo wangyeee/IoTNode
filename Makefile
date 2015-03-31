@@ -21,6 +21,8 @@ INCLUDE+=-I$(CURDIR)/hardware
 INCLUDE+=-I$(CURDIR)/Libraries/SPI
 INCLUDE+=-I$(CURDIR)/Libraries/nrf24l01
 INCLUDE+=-I$(CURDIR)/Libraries/config
+INCLUDE+=-I$(CURDIR)/Libraries/GPIO
+INCLUDE+=-I$(CURDIR)/Libraries/ADC
 
 SRC_DIR=$(CURDIR)
 SRC_DIR+=$(CURDIR)/Libraries/STM32F0xx_StdPeriph_Driver/src
@@ -29,6 +31,8 @@ SRC_DIR+=$(CURDIR)/hardware
 SRC_DIR+=$(CURDIR)/Libraries/SPI
 SRC_DIR+=$(CURDIR)/Libraries/nrf24l01
 SRC_DIR+=$(CURDIR)/Libraries/config
+SRC_DIR+=$(CURDIR)/Libraries/GPIO
+SRC_DIR+=$(CURDIR)/Libraries/ADC
 
 # vpath is used so object files are written to the current directory instead
 # of the same directory as their source files
@@ -48,6 +52,8 @@ SRC+=spi.c
 SRC+=nrf24l01.c
 SRC+=flash.c
 SRC+=node_config.c
+SRC+=gpio.c
+SRC+=adc.c
 
 # Standard Peripheral Source Files
 SRC+=stm32f0xx_adc.c
@@ -105,7 +111,7 @@ all: $(OBJ)
 	@echo [BIN] $(notdir $(BIN_DIR)/$(TARGET).bin)
 	@$(OBJCOPY) -O binary $(BIN_DIR)/$(TARGET).elf $(BIN_DIR)/$(TARGET).bin
 
-.PHONY: clean
+.PHONY: clean tags
 
 clean:
 	@echo [RM] Objects
@@ -121,3 +127,11 @@ flash: all
 	@st-flash write $(BIN_DIR)/$(TARGET).bin 0x8000000
 
 reflash: clean flash
+
+tags:
+	rm -f TAGS
+	find . -name "*.h" | xargs etags
+
+# TODO for use with auto-complete clang
+include:
+	@echo $(INCLUDE)

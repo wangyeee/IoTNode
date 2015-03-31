@@ -5,43 +5,50 @@
 extern "C" {
 #endif
 
-/*******************命令寄存器***************************/
-#define R_REGISTER 0x00//读取配置寄存器
-#define W_REGISTER 0x20//写配置寄存器
-#define R_RX_PAYLOAD 0x61//读取RX有效数据
-#define W_TX_PAYLOAD 0xa0//写TX有效数据
-#define FLUSH_TX 0xe1//清除TXFIFO寄存器
-#define FLUSH_RX 0xe2//清除RXFIFO寄存器
-#define REUSE_TX_PL 0xe3//重新使用上一包有效数据
-#define NOP 0xff//空操作
-#define W_TX_PAYLOAD_NOACK 0xB0// Used in TX mode, Disable AUTOACK on this specific packet
+/* nRF24L0 commands */
+#define nRF24_CMD_RREG 0x00  // R_REGISTER -> Read command and status registers
+#define nRF24_CMD_WREG 0x20  // W_REGISTER -> Write command and status registers
+#define nRF24_CMD_R_RX_PAYLOAD 0x61  // R_RX_PAYLOAD -> Read RX payload
+#define nRF24_CMD_W_TX_PAYLOAD 0xA0  // W_TX_PAYLOAD -> Write TX payload
+#define nRF24_CMD_FLUSH_TX 0xE1  // FLUSH_TX -> Flush TX FIFO
+#define nRF24_CMD_FLUSH_RX 0xE2  // FLUSH_RX -> Flush RX FIFO
+#define nRF24_CMD_REUSE_TX_PL 0xE3  // REUSE_TX_PL -> Reuse last transmitted payload
+#define nRF24_CMD_NOP 0xFF  // No operation (to read status register)
 
-/******************寄存器地址****************************/
-#define CONFIG 0x00//配置寄存器
-#define EN_AA 0x01//使能自动应答
-#define EN_RXADDR 0x02//接收通道使能0-5个通道
-#define SETUP_AW 0x03//设置数据通道地址宽度3-5
-#define SETUP_RETR 0x04//建立自动重发
-#define RF_CH 0x05//射频通道设置
-#define RF_SETUP 0x06//射频寄存器
-#define STATUS 0x07//状态寄存器
-#define OBSERVE_TX 0x08//发送检测寄存器
-#define CD 0x09//载波
-#define RX_ADDR_P0 0x0a//数据通道0接收地址
-#define RX_ADDR_P1 0x0b//数据通道1接收地址
-#define RX_ADDR_P2 0x0c//数据通道2接收地址
-#define RX_ADDR_P3 0x0d//数据通道3接收地址
-#define RX_ADDR_P4 0x0e//数据通道4接收地址
-#define RX_ADDR_P5 0x0f//数据通道5接收地址
-#define TX_ADDR 0x10//发送地址
-#define RX_PW_P0 0x11//P0通道数据宽度设置
-#define RX_PW_P1 0x12//P1通道数据宽度设置
-#define RX_PW_P2 0x13//P2通道数据宽度设置
-#define RX_PW_P3 0x14//P3通道数据宽度设置
-#define RX_PW_P4 0x15//P4通道数据宽度设置
-#define RX_PW_P5 0x16//P5通道数据宽度设置
-#define FIFO_STATUS 0x17//FIFO状态寄存器
-#define FEATURE 0x1D// Additional features register, needed to enable the additional commands
+/* nRF24L0 registers */
+#define nRF24_REG_CONFIG 0x00  // Configuration register
+#define nRF24_REG_EN_AA 0x01  // Enable "Auto acknowledgment"
+#define nRF24_REG_EN_RXADDR 0x02  // Enable RX addresses
+#define nRF24_REG_SETUP_AW 0x03  // Setup of address widths
+#define nRF24_REG_SETUP_RETR 0x04  // Setup of automatic retranslation
+#define nRF24_REG_RF_CH 0x05  // RF channel
+#define nRF24_REG_RF_SETUP 0x06  // RF setup register
+#define nRF24_REG_STATUS 0x07  // Status register
+#define nRF24_REG_OBSERVE_TX 0x08  // Transmit observe register
+#define nRF24_REG_CD 0x09  // Carrier detect
+#define nRF24_REG_RX_ADDR_P0 0x0A  // Receive address data pipe 0
+#define nRF24_REG_RX_ADDR_P1 0x0B  // Receive address data pipe 1
+#define nRF24_REG_RX_ADDR_P2 0x0C  // Receive address data pipe 2
+#define nRF24_REG_RX_ADDR_P3 0x0D  // Receive address data pipe 3
+#define nRF24_REG_RX_ADDR_P4 0x0E  // Receive address data pipe 4
+#define nRF24_REG_RX_ADDR_P5 0x0F  // Receive address data pipe 5
+#define nRF24_REG_TX_ADDR 0x10  // Transmit address
+#define nRF24_REG_RX_PW_P0 0x11  // Number of bytes in RX payload id data pipe 0
+#define nRF24_REG_RX_PW_P1 0x12  // Number of bytes in RX payload id data pipe 1
+#define nRF24_REG_RX_PW_P2 0x13  // Number of bytes in RX payload id data pipe 2
+#define nRF24_REG_RX_PW_P3 0x14  // Number of bytes in RX payload id data pipe 3
+#define nRF24_REG_RX_PW_P4 0x15  // Number of bytes in RX payload id data pipe 4
+#define nRF24_REG_RX_PW_P5 0x16  // Number of bytes in RX payload id data pipe 5
+#define nRF24_REG_FIFO_STATUS 0x17  // FIFO status register
+#define nRF24_REG_DYNPD 0x1C  // Enable dynamic payload length
+#define nRF24_REG_FEATURE 0x1D  // Feature register
+
+/* nRF24L0 bits */
+#define nRF24_MASK_RX_DR 0x40  // Mask interrupt caused by RX_DR
+#define nRF24_MASK_TX_DS 0x20  // Mask interrupt caused by TX_DS
+#define nRF24_MASK_MAX_RT 0x10  // Mask interrupt caused by MAX_RT
+#define nRF24_FIFO_RX_EMPTY 0x01  // RX FIFO empty flag
+#define nRF24_FIFO_RX_FULL 0x02  // RX FIFO full flag
 
 #ifdef __cplusplus
 }

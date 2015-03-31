@@ -4,40 +4,39 @@
 #include "spi.h"
 #include "nrf24l01.h"
 #include "node_config.h"
+#include "gpio.h"
+#include "adc.h"
 
 void NRF24L01_Test_Task(void);
 void FLASH_Test_Task(void);
 
 int main(void) {
-    uint32_t tmp;
-
+    uint16_t adc_val;
+    float vol;
     init_stdio_USART2();
     init_delay();
     printf("Hello STM32F0!\n");
     delay_ms(1000);
     printf("After 1000 ms.\n");
-    tmp = RCC->CFGR & RCC_CFGR_SWS;
-
-    if (tmp == 0) {
-        printf("HSI\n");
-    } else if (tmp == 4) {
-        printf("HSE\n");
-    } else if (tmp == 8) {
-        uint32_t pllsource = RCC->CFGR & RCC_CFGR_PLLSRC;
-        printf("PLL\n");
-        if (pllsource == 0) {
-            printf("HSI for PLL.\n");
-        } else {
-            printf("HSE for PLL: %d.\n", pllsource);
-        }
-    } else {
-        printf("Error:%d, HSI\n", tmp);
-    }
-    FLASH_Test_Task();
+    analog_init(ADC_CHL1);
+    //digital_init(PA12);
+    //PA15.Mode = GPIO_Mode_IN;
+    //digital_init(PA15);
+    //FLASH_Test_Task();
     //SPI2_Init();
     //printf("SPI2 active.\n");
     //NRF24L01_Test_Task();
     for (;;) {
+        adc_val = analog_read(ADC_CHL1);
+        vol = adc_val / 4096.0f * 3.3f;
+        printf("ADC1 value = %d, voltage = %d.%02dV\n", adc_val,
+               (int) vol, (int)((vol - (int)vol) * 100));
+        //digital_low(PA12);
+        //sw = digital_read(PA15);
+        //if (sw) {
+        //    digital_high(PA12);
+        //}
+        delay_ms(500);
         /* char x; */
         /* for (x = 'a'; x <= 'z'; x++) { */
         /*     printf("Dummy task, char = %c.\n", x); */
@@ -96,11 +95,12 @@ void NRF24L01_Test_Task(void) {
     uint8_t status;
     uint8_t dt = '\0';
     uint8_t ret;
-    uint8_t thisAddr[5]= {97, 83, 22, 222, 111};
+    /* uint8_t thisAddr[5]= {97, 83, 22, 222, 111}; */
     /* uint8_t remoteAddr[5]= {97, 83, 22, 222, 121}; */
 
     printf("Init NRF24L01...\n");
-    nrf24l01Init();
+
+    nRF24_init();
 
     delay_ms(100);
     status = nRF24_Check();
@@ -111,11 +111,26 @@ void NRF24L01_Test_Task(void) {
     }
 
     printf("Receiving data...\n"); // working...
-    nrfSetRxMode(92, 5, thisAddr); //接收92频道，5字节地址
+    nRF24_TXMode();
+    //nRF24_ClearIRQFlags();
+
+    //nrfSetRxMode(92, 5, thisAddr); //接收92频道，5字节地址
+    /*
     for (;;) {
-        ret = nrfGetReceivedData(&dt, 1);
+        ret = nRF24_RXPacket(&dt, 1);
+
         printf("NRF data = %c, ret = %d\n", dt, ret);
+        nRF24_RXMode(1);
+
         delay_ms(500);
+        }*/
+    for (;;) {
+        for (dt = 'a'; dt <= 'z'; dt++) {
+            ret = nRF24_TXPacket(&dt, 1);
+            printf("NRF sending data = %c, ret = %d\n", dt, ret);
+            delay_ms(500);
+            nRF24_TXMode();
+        }
     }
     /* for (;;) { */
     /*     for (dt = 'a'; dt <= 'z'; dt++) { */
