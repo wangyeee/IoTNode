@@ -11,6 +11,7 @@ typedef struct {
     uint32_t RCC_clock;
     GPIO_TypeDef* GPIO;
     uint32_t GPIO_Pin;
+    uint16_t GPIO_PinSource;
     GPIOMode_TypeDef Mode;
 } IO_Pin;
 

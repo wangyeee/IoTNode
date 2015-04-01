@@ -23,6 +23,7 @@ INCLUDE+=-I$(CURDIR)/Libraries/nrf24l01
 INCLUDE+=-I$(CURDIR)/Libraries/config
 INCLUDE+=-I$(CURDIR)/Libraries/GPIO
 INCLUDE+=-I$(CURDIR)/Libraries/ADC
+INCLUDE+=-I$(CURDIR)/Libraries/PWM
 
 SRC_DIR=$(CURDIR)
 SRC_DIR+=$(CURDIR)/Libraries/STM32F0xx_StdPeriph_Driver/src
@@ -33,6 +34,7 @@ SRC_DIR+=$(CURDIR)/Libraries/nrf24l01
 SRC_DIR+=$(CURDIR)/Libraries/config
 SRC_DIR+=$(CURDIR)/Libraries/GPIO
 SRC_DIR+=$(CURDIR)/Libraries/ADC
+SRC_DIR+=$(CURDIR)/Libraries/PWM
 
 # vpath is used so object files are written to the current directory instead
 # of the same directory as their source files
@@ -54,6 +56,7 @@ SRC+=flash.c
 SRC+=node_config.c
 SRC+=gpio.c
 SRC+=adc.c
+SRC+=pwm.c
 
 # Standard Peripheral Source Files
 SRC+=stm32f0xx_adc.c

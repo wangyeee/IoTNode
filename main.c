@@ -6,6 +6,7 @@
 #include "node_config.h"
 #include "gpio.h"
 #include "adc.h"
+#include "pwm.h"
 
 void NRF24L01_Test_Task(void);
 void FLASH_Test_Task(void);
@@ -13,11 +14,13 @@ void FLASH_Test_Task(void);
 int main(void) {
     uint16_t adc_val;
     float vol;
+    //int16_t t;
     init_stdio_USART2();
     init_delay();
     printf("Hello STM32F0!\n");
     delay_ms(1000);
     printf("After 1000 ms.\n");
+    pwm_init(PWM1);
     analog_init(ADC_CHL1);
     //digital_init(PA12);
     //PA15.Mode = GPIO_Mode_IN;
@@ -27,16 +30,30 @@ int main(void) {
     //printf("SPI2 active.\n");
     //NRF24L01_Test_Task();
     for (;;) {
+        /*
+        for (t = 0; t <= 9000; t+=50) {
+            printf("Change duty cycle to %d\n", t);
+            pwm_change_duty_cycle(PWM1, t);
+            delay_ms(20);
+        }
+        for (t = 9000; t >= 0; t-=50) {
+            printf("Change duty cycle to %d\n", t);
+            pwm_change_duty_cycle(PWM1, t);
+            delay_ms(20);
+        }
+        */
         adc_val = analog_read(ADC_CHL1);
         vol = adc_val / 4096.0f * 3.3f;
-        printf("ADC1 value = %d, voltage = %d.%02dV\n", adc_val,
-               (int) vol, (int)((vol - (int)vol) * 100));
+        adc_val += adc_val;
+        printf("ADC1 value = %d, voltage = %d.%02dV\n", adc_val, (int) vol, (int)((vol - (int)vol) * 100));
+        printf("Change duty cycle to %d\n", adc_val);
+        pwm_change_duty_cycle(PWM1, adc_val);
         //digital_low(PA12);
         //sw = digital_read(PA15);
         //if (sw) {
         //    digital_high(PA12);
         //}
-        delay_ms(500);
+        //delay_ms(500);
         /* char x; */
         /* for (x = 'a'; x <= 'z'; x++) { */
         /*     printf("Dummy task, char = %c.\n", x); */
