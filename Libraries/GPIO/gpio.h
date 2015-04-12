@@ -24,12 +24,44 @@ static DIO_Pin PA12 = {
     .Mode = GPIO_Mode_OUT,
 };
 
+/*
+static DIO_Pin PA13 = {
+    .RCC_clock = RCC_AHBPeriph_GPIOA,
+    .GPIO = GPIOA,
+    .GPIO_Pin = GPIO_Pin_13,
+    .Mode = GPIO_Mode_OUT,
+};
+
+static DIO_Pin PA14 = {
+    .RCC_clock = RCC_AHBPeriph_GPIOA,
+    .GPIO = GPIOA,
+    .GPIO_Pin = GPIO_Pin_14,
+    .Mode = GPIO_Mode_OUT,
+};
+*/
+
 static DIO_Pin PA15 = {
     .RCC_clock = RCC_AHBPeriph_GPIOA,
     .GPIO = GPIOA,
     .GPIO_Pin = GPIO_Pin_15,
     .Mode = GPIO_Mode_OUT,
 };
+
+static DIO_Pin PF6 = {
+    .RCC_clock = RCC_AHBPeriph_GPIOF,
+    .GPIO = GPIOF,
+    .GPIO_Pin = GPIO_Pin_6,
+    .Mode = GPIO_Mode_OUT,
+};
+
+/*
+static DIO_Pin PF7 = {
+    .RCC_clock = RCC_AHBPeriph_GPIOF,
+    .GPIO = GPIOF,
+    .GPIO_Pin = GPIO_Pin_7,
+    .Mode = GPIO_Mode_OUT,
+};
+*/
 
 void digital_init(DIO_Pin pin);
 void digital_high(DIO_Pin pin);

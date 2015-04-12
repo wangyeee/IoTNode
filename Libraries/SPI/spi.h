@@ -7,6 +7,9 @@ extern "C" {
 
 #include "stm32f0xx.h"
 
+void SPI1_Init(void);
+uint8_t SPI1_Transfer(uint8_t data);
+
 void SPI2_Init(void);
 uint8_t SPI2_Transfer(uint8_t data);
 

@@ -1,5 +1,5 @@
-TARGET:=test
-TOOLCHAIN_ROOT:=/Users/wang/gcc-arm-none-eabi
+TARGET:=node
+TOOLCHAIN_ROOT:=~/gcc-arm-none-eabi
 TOOLCHAIN_PATH:=$(TOOLCHAIN_ROOT)/bin
 TOOLCHAIN_PREFIX:=arm-none-eabi
 
@@ -24,6 +24,7 @@ INCLUDE+=-I$(CURDIR)/Libraries/config
 INCLUDE+=-I$(CURDIR)/Libraries/GPIO
 INCLUDE+=-I$(CURDIR)/Libraries/ADC
 INCLUDE+=-I$(CURDIR)/Libraries/PWM
+INCLUDE+=-I$(CURDIR)/Libraries/ILI9163C
 
 SRC_DIR=$(CURDIR)
 SRC_DIR+=$(CURDIR)/Libraries/STM32F0xx_StdPeriph_Driver/src
@@ -35,6 +36,7 @@ SRC_DIR+=$(CURDIR)/Libraries/config
 SRC_DIR+=$(CURDIR)/Libraries/GPIO
 SRC_DIR+=$(CURDIR)/Libraries/ADC
 SRC_DIR+=$(CURDIR)/Libraries/PWM
+SRC_DIR+=$(CURDIR)/Libraries/ILI9163C
 
 # vpath is used so object files are written to the current directory instead
 # of the same directory as their source files
@@ -57,6 +59,7 @@ SRC+=node_config.c
 SRC+=gpio.c
 SRC+=adc.c
 SRC+=pwm.c
+SRC+=ILI9163C.c
 
 # Standard Peripheral Source Files
 SRC+=stm32f0xx_adc.c
@@ -114,7 +117,7 @@ all: $(OBJ)
 	@echo [BIN] $(notdir $(BIN_DIR)/$(TARGET).bin)
 	@$(OBJCOPY) -O binary $(BIN_DIR)/$(TARGET).elf $(BIN_DIR)/$(TARGET).bin
 
-.PHONY: clean tags
+.PHONY: clean tags include
 
 clean:
 	@echo [RM] Objects
