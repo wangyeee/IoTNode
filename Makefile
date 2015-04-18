@@ -130,7 +130,7 @@ clean:
 
 
 flash: all
-	@st-flash write $(BIN_DIR)/$(TARGET).bin 0x8000000
+	@st-flash --reset write $(BIN_DIR)/$(TARGET).bin 0x8000000
 
 reflash: clean flash
 
