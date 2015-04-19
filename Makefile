@@ -25,6 +25,7 @@ INCLUDE+=-I$(CURDIR)/Libraries/GPIO
 INCLUDE+=-I$(CURDIR)/Libraries/ADC
 INCLUDE+=-I$(CURDIR)/Libraries/PWM
 INCLUDE+=-I$(CURDIR)/Libraries/ILI9163C
+INCLUDE+=-I$(CURDIR)/Libraries/NodeLink
 
 SRC_DIR=$(CURDIR)
 SRC_DIR+=$(CURDIR)/Libraries/STM32F0xx_StdPeriph_Driver/src
@@ -37,6 +38,7 @@ SRC_DIR+=$(CURDIR)/Libraries/GPIO
 SRC_DIR+=$(CURDIR)/Libraries/ADC
 SRC_DIR+=$(CURDIR)/Libraries/PWM
 SRC_DIR+=$(CURDIR)/Libraries/ILI9163C
+SRC_DIR+=$(CURDIR)/Libraries/NodeLink
 
 # vpath is used so object files are written to the current directory instead
 # of the same directory as their source files
@@ -60,6 +62,8 @@ SRC+=gpio.c
 SRC+=adc.c
 SRC+=pwm.c
 SRC+=ILI9163C.c
+SRC+=NodeLink.c
+SRC+=NLnRF24L01.c
 
 # Standard Peripheral Source Files
 SRC+=stm32f0xx_adc.c
@@ -100,6 +104,7 @@ OBJCOPY=$(TOOLCHAIN_PATH)/$(TOOLCHAIN_PREFIX)-objcopy
 AS=$(TOOLCHAIN_PATH)/$(TOOLCHAIN_PREFIX)-as
 AR=$(TOOLCHAIN_PATH)/$(TOOLCHAIN_PREFIX)-ar
 GDB=$(TOOLCHAIN_PATH)/$(TOOLCHAIN_PREFIX)-gdb
+SIZE=$(TOOLCHAIN_PATH)/$(TOOLCHAIN_PREFIX)-size
 
 OBJ = $(SRC:%.c=$(BUILD_DIR)/%.o)
 
@@ -116,6 +121,7 @@ all: $(OBJ)
 	@$(OBJCOPY) -O ihex $(BIN_DIR)/$(TARGET).elf $(BIN_DIR)/$(TARGET).hex
 	@echo [BIN] $(notdir $(BIN_DIR)/$(TARGET).bin)
 	@$(OBJCOPY) -O binary $(BIN_DIR)/$(TARGET).elf $(BIN_DIR)/$(TARGET).bin
+	@$(SIZE) -t $(BIN_DIR)/$(TARGET).elf
 
 .PHONY: clean tags include
 

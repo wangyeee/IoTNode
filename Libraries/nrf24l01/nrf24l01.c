@@ -2,21 +2,11 @@
 #include "spi.h"
 #include "utility.h"
 
-#define NRF_CS_HIGH GPIO_SetBits(NRF_CS_GPIO, NRF_CS_PIN)
-#define NRF_CS_LOW GPIO_ResetBits(NRF_CS_GPIO, NRF_CS_PIN)
-#define NRF_CE_HIGH GPIO_SetBits(NRF_CE_GPIO, NRF_CE_PIN)
-#define NRF_CE_LOW GPIO_ResetBits(NRF_CE_GPIO, NRF_CE_PIN)
-
-#define nrfSPI(x) SPI2_Transfer(x)
-
-static uint8_t data_rdy;
-static uint8_t data_buffer[16];
-
 uint8_t nrfReadReg(uint8_t regAddr) {
     uint8_t returnData;
     NRF_CS_LOW;
-    nrfSPI(regAddr);
-    returnData = nrfSPI(0x00);
+    SPI2_Transfer(regAddr);
+    returnData = SPI2_Transfer(0x00);
     NRF_CS_HIGH;
     return returnData;
 }
@@ -24,8 +14,8 @@ uint8_t nrfReadReg(uint8_t regAddr) {
 uint8_t nrfWriteReg(uint8_t regAddr, uint8_t writeData) {
     uint8_t returnData;
     NRF_CS_LOW;
-    returnData = nrfSPI(regAddr);
-    nrfSPI(writeData);
+    returnData = SPI2_Transfer(regAddr);
+    SPI2_Transfer(writeData);
     NRF_CS_HIGH;
     return returnData;
 }
@@ -34,9 +24,9 @@ uint8_t nrfReadRxData(uint8_t regAddr, uint8_t *rxData, uint8_t dataLen) {
     uint8_t ret;
     uint8_t i;
     NRF_CS_LOW;
-    ret = nrfSPI(regAddr);
+    ret = SPI2_Transfer(regAddr);
     for (i=0; i<dataLen; i++) {
-        rxData[i]=nrfSPI(0x00);
+        rxData[i]=SPI2_Transfer(0x00);
     }
     NRF_CS_HIGH;
     return ret; 
@@ -47,9 +37,9 @@ uint8_t nrfWriteTxData(uint8_t regAddr, uint8_t *txData, uint8_t dataLen) {
     uint8_t ret;
     uint8_t i;
     NRF_CS_LOW;
-    ret = nrfSPI(regAddr);
+    ret = SPI2_Transfer(regAddr);
     for (i=0; i<dataLen; i++) {
-        nrfSPI(*txData++);
+        SPI2_Transfer(*txData++);
     }
     NRF_CS_HIGH;
     return ret;
@@ -105,8 +95,6 @@ void nrf24l01Init(void) {
     NVIC_InitStruct.NVIC_IRQChannelPriority = 0x00;
     NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&NVIC_InitStruct);
-
-    data_rdy = 0;
 
     NRF_CS_HIGH;
     NRF_CE_LOW;
@@ -179,7 +167,7 @@ uint8_t nrfSendData(uint8_t rfChannel, uint8_t addrWidth, uint8_t *txAddr, uint8
             //一次类推，
             //retry第9次时，（加开始retry之前的一次，共发射了10次），retransmit 15次成功，则，总共retransmit了16*9+15=159次
             //每次try是transmit 16次 （本身1次，加15次retransmit）
-            ret += (16*retryCnt);
+            ret += 16 * retryCnt;
             break;
         }
     }
@@ -242,7 +230,7 @@ uint8_t nrfCheckACK(void) {
         //关键！！不然会出现意想不到的后果
         //CSN = 0;
         NRF_CS_LOW;
-        nrfSPI(NRF24L01_FLUSH_TX);
+        SPI2_Transfer(NRF24L01_FLUSH_TX);
         /* CSN = 1; */
         NRF_CS_HIGH;
         return 255;
@@ -251,14 +239,14 @@ uint8_t nrfCheckACK(void) {
     }
 }
 
-uint8_t nrfGetReceivedData(uint8_t *dataBuffer, uint8_t len) {
-    uint8_t i;
-    for (i = 0; i < len; i++) {
-        dataBuffer[i] = data_buffer[i];
-    }
-    data_rdy = 0;
-    return i;
-}
+/* uint8_t nrfGetReceivedData(uint8_t *dataBuffer, uint8_t len) { */
+/*     uint8_t i; */
+/*     for (i = 0; i < len; i++) { */
+/*         dataBuffer[i] = data_buffer[i]; */
+/*     } */
+/*     data_rdy = 0; */
+/*     return i; */
+/* } */
 
 // Check if nRF24L01 present (send byte sequence, read it back and compare)
 // return:
@@ -277,23 +265,6 @@ uint8_t nRF24_Check(void) {
     return 0;
 }
 
-uint8_t nrfDataReady(void) {
-    return data_rdy;
-}
-
-void EXTI4_15_IRQHandler(void) {
-    if (EXTI_GetITStatus(EXTI_Line8) != RESET) {
-        uint8_t status;
-
-        status = nrfReadReg(NRF24L01_R_REGISTER + NRF24L01_STATUS);
-        if (status & 0x40) {
-            nrfReadRxData(NRF24L01_R_RX_PAYLOAD, data_buffer, 16);
-            nrfWriteReg(NRF24L01_W_REGISTER | NRF24L01_STATUS, 0xff);
-            NRF_CS_LOW;
-            nrfSPI(NRF24L01_FLUSH_RX);
-            NRF_CS_HIGH;
-            data_rdy = 1;
-        }
-        EXTI_ClearITPendingBit(EXTI_Line8);
-    }
-}
+/* uint8_t nrfDataReady(void) { */
+/*     return data_rdy; */
+/* } */
