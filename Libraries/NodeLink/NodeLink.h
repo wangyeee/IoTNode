@@ -23,11 +23,12 @@ typedef struct {
 } node_t;
 
 typedef struct {
-    msg_type type;
+    uint8_t type;
     uint8_t seq;
     uint8_t payload[MSG_PAYLOAD_SIZE];
 } message_t;
 
+#define NODE_SIZE sizeof(node_t)
 #define MSG_SIZE sizeof(message_t)
 
 typedef uint8_t (*message_listener)(node_t from, uint8_t* msg, uint8_t len);

@@ -41,6 +41,7 @@
 #include <sys/types.h>
 #include "stdio.h"
 #include "stm32f0xx_usart.h"
+#include "iot_cfg.h"
 
 #define STDIO_USART USART2
 /***************************************************************************/
@@ -70,6 +71,7 @@ int _lseek_r (struct _reent *r, int file, int ptr, int dir) {
 /***************************************************************************/
 
 int _write_r(struct _reent *r, int file, char * ptr, int len) {
+#ifndef ENABLE_SPI2SERIAL
     int index;
     if (!ptr) {
         return 0;
@@ -79,6 +81,9 @@ int _write_r(struct _reent *r, int file, char * ptr, int len) {
         USART_SendData(STDIO_USART, ptr[index]);
     }
     return index;
+#else
+    return 0;
+#endif
 }
 
 /***************************************************************************/

@@ -1,6 +1,7 @@
 #include "nrf24l01.h"
 #include "spi.h"
 #include "utility.h"
+#include "NodeLink.h"
 
 uint8_t nrfReadReg(uint8_t regAddr) {
     uint8_t returnData;
@@ -195,7 +196,8 @@ void nrfSetRxMode(uint8_t rfChannel, uint8_t addrWidth, uint8_t *rxAddr) {
     nrfWriteTxData(NRF24L01_W_REGISTER | NRF24L01_RX_ADDR_P0, rxAddr, addrWidth); //接收设备接收通道0使用和发送设备相同的发送地址
 
     nrfWriteReg(NRF24L01_W_REGISTER | NRF24L01_RF_CH, rfChannel); //设置射频通道
-    nrfWriteReg(NRF24L01_W_REGISTER | NRF24L01_RX_PW_P0, RECEIVE_DATA_WIDTH); //接收通道0选择和发送通道相同有效数据宽度
+    nrfWriteReg(NRF24L01_W_REGISTER | NRF24L01_RX_PW_P0, MSG_SIZE); //接收通道0选择和发送通道相同有效数据宽度
+    /* nrfWriteReg(NRF24L01_W_REGISTER | NRF24L01_RX_PW_P0, RECEIVE_DATA_WIDTH); */
 
     //nrfWriteReg( W_REGISTER+RF_SETUP, 0x26 ); // 数据传输率250Kbps，发射功率0dBm
     nrfWriteReg(NRF24L01_W_REGISTER | NRF24L01_RF_SETUP, 0x27); // 数据传输率250Kbps，发射功率0dBm, LNA_HCURR (Low Noise Amplifier, High Current?)
@@ -239,15 +241,6 @@ uint8_t nrfCheckACK(void) {
     }
 }
 
-/* uint8_t nrfGetReceivedData(uint8_t *dataBuffer, uint8_t len) { */
-/*     uint8_t i; */
-/*     for (i = 0; i < len; i++) { */
-/*         dataBuffer[i] = data_buffer[i]; */
-/*     } */
-/*     data_rdy = 0; */
-/*     return i; */
-/* } */
-
 // Check if nRF24L01 present (send byte sequence, read it back and compare)
 // return:
 //   0 - looks like an nRF24L01 is online
@@ -264,7 +257,3 @@ uint8_t nRF24_Check(void) {
             return 1;
     return 0;
 }
-
-/* uint8_t nrfDataReady(void) { */
-/*     return data_rdy; */
-/* } */

@@ -27,6 +27,8 @@ INCLUDE+=-I$(CURDIR)/Libraries/PWM
 INCLUDE+=-I$(CURDIR)/Libraries/ILI9163C
 INCLUDE+=-I$(CURDIR)/Libraries/NodeLink
 
+INCLUDE+=-I$(CURDIR)/Modules/SPI2Serial
+
 SRC_DIR=$(CURDIR)
 SRC_DIR+=$(CURDIR)/Libraries/STM32F0xx_StdPeriph_Driver/src
 SRC_DIR+=$(CURDIR)/Libraries/syscall
@@ -39,6 +41,8 @@ SRC_DIR+=$(CURDIR)/Libraries/ADC
 SRC_DIR+=$(CURDIR)/Libraries/PWM
 SRC_DIR+=$(CURDIR)/Libraries/ILI9163C
 SRC_DIR+=$(CURDIR)/Libraries/NodeLink
+
+SRC_DIR+=$(CURDIR)/Modules/SPI2Serial
 
 # vpath is used so object files are written to the current directory instead
 # of the same directory as their source files
@@ -64,6 +68,7 @@ SRC+=pwm.c
 SRC+=ILI9163C.c
 SRC+=NodeLink.c
 SRC+=NLnRF24L01.c
+SRC+=SPI2Serial.c
 
 # Standard Peripheral Source Files
 SRC+=stm32f0xx_adc.c
@@ -121,7 +126,7 @@ all: $(OBJ)
 	@$(OBJCOPY) -O ihex $(BIN_DIR)/$(TARGET).elf $(BIN_DIR)/$(TARGET).hex
 	@echo [BIN] $(notdir $(BIN_DIR)/$(TARGET).bin)
 	@$(OBJCOPY) -O binary $(BIN_DIR)/$(TARGET).elf $(BIN_DIR)/$(TARGET).bin
-	@$(SIZE) -t $(BIN_DIR)/$(TARGET).elf
+	@cd $(BIN_DIR); $(SIZE) -t $(TARGET).elf
 
 .PHONY: clean tags include
 
@@ -141,9 +146,11 @@ flash: all
 reflash: clean flash
 
 tags:
-	rm -f TAGS
-	find . -name "*.h" | xargs etags
+	@echo "Updating TAGS..."
+	@rm -f TAGS
+	@find . -name "*.h" | xargs etags
+	@echo "Done!"
 
-# TODO for use with auto-complete clang
+# for use with auto-complete clang
 include:
 	@echo $(INCLUDE)
