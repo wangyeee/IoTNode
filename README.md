@@ -1,6 +1,6 @@
 # IoTNode
 
-My IoT implememtation with STM32F0 and nRF24L01.
+My IoT implementation with STM32F0 and nRF24L01.
 
 ## Compile and run
 
