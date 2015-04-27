@@ -27,7 +27,7 @@ INCLUDE+=-I$(CURDIR)/Libraries/PWM
 INCLUDE+=-I$(CURDIR)/Libraries/ILI9163C
 INCLUDE+=-I$(CURDIR)/Libraries/NodeLink
 
-INCLUDE+=-I$(CURDIR)/Modules/SPI2Serial
+INCLUDE+=-I$(CURDIR)/Modules/include
 
 SRC_DIR=$(CURDIR)
 SRC_DIR+=$(CURDIR)/Libraries/STM32F0xx_StdPeriph_Driver/src
@@ -43,6 +43,7 @@ SRC_DIR+=$(CURDIR)/Libraries/ILI9163C
 SRC_DIR+=$(CURDIR)/Libraries/NodeLink
 
 SRC_DIR+=$(CURDIR)/Modules/SPI2Serial
+SRC_DIR+=$(CURDIR)/Modules/SwitchControl
 
 # vpath is used so object files are written to the current directory instead
 # of the same directory as their source files
@@ -68,7 +69,9 @@ SRC+=pwm.c
 SRC+=ILI9163C.c
 SRC+=NodeLink.c
 SRC+=NLnRF24L01.c
+
 SRC+=SPI2Serial.c
+SRC+=SwitchControl.c
 
 # Standard Peripheral Source Files
 SRC+=stm32f0xx_adc.c

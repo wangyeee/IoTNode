@@ -5,7 +5,9 @@
 extern "C" {
 #endif
 
+#ifdef STM32F0XX
 #include "stm32f0xx.h"
+#endif
 
 #define MSG_PAYLOAD_SIZE 16
 
@@ -16,6 +18,11 @@ typedef enum {
     // etc.
     MSG_LISTENER_AMOUNT
 } msg_type;
+
+typedef enum {
+    DISABLED = 0,
+    ENABLED
+} periph_cfg;
 
 typedef struct {
     uint8_t channel;

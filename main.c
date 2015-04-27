@@ -9,9 +9,11 @@
 #include "pwm.h"
 #include "SPI2Serial.h"
 #include "NodeLink.h"
+#include "SwitchControl.h"
 
 void spi2serial_main(void) {
     uint8_t status;
+    /* TODO load listening address from flash. */
     uint8_t thisAddr[5]= {97, 83, 22, 222, 121};
 
     init_stdio_USART2();
@@ -39,55 +41,13 @@ void spi2serial_main(void) {
     }
 }
 
-typedef struct {
-    uint8_t id;
-    uint8_t enabled;
-    uint8_t status;
-    DIO_Pin pin;
-} switch_t;
-
-switch_t led_pa12;
-
-uint8_t switch_message_listener(node_t from, uint8_t* msg, uint8_t len) {
-    if (msg[0]) {
-        led_pa12.status = 1;
-    } else {
-        led_pa12.status = 0;
-    }
-    return 0;
-}
-
 void node_main(void) {
     uint8_t status;
+    /* TODO load listening address from flash. */
     uint8_t thisAddr[5]= {97, 89, 64, 222, 121};
 
     init_stdio_USART2();
     init_delay();
-    led_pa12.id = 0;
-    led_pa12.enabled = 1;
-    led_pa12.status = 0;
-    led_pa12.pin = PA12;
-
-    if (led_pa12.enabled) {
-        digital_init(led_pa12.pin);
-        {
-            digital_high(led_pa12.pin);
-            delay_ms(500);
-            digital_low(led_pa12.pin);
-            delay_ms(500);
-            digital_high(led_pa12.pin);
-            delay_ms(500);
-            digital_low(led_pa12.pin);
-            delay_ms(500);
-            digital_high(led_pa12.pin);
-            delay_ms(500);
-        }
-        if (led_pa12.status) {
-            digital_high(led_pa12.pin);
-        } else {
-            digital_low(led_pa12.pin);
-        }
-    }
 
     SPI2_Init();
 
@@ -101,17 +61,13 @@ void node_main(void) {
     if (status == 1) {
         for (;;);
     }
-    nl_register_message_listener(switch_message_listener, SWITCH, 0);
+
     nrfSetRxMode(92, 5, thisAddr);
+    /* From now on, controls and sensors can be initialized. */
+    init_switchs();
 
     for (;;) {
-        if (led_pa12.enabled) {
-            if (led_pa12.status) {
-                digital_high(led_pa12.pin);
-            } else {
-                digital_low(led_pa12.pin);
-            }
-        }
+        /* currently nothing needs to do in the main loop. */
     }
 }
 

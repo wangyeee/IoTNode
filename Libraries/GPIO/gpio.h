@@ -17,6 +17,20 @@ typedef struct {
 
 #define DIO_Pin IO_Pin
 
+static DIO_Pin PA0 = {
+    .RCC_clock = RCC_AHBPeriph_GPIOA,
+    .GPIO = GPIOA,
+    .GPIO_Pin = GPIO_Pin_0,
+    .Mode = GPIO_Mode_OUT,
+};
+
+static DIO_Pin PA1 = {
+    .RCC_clock = RCC_AHBPeriph_GPIOA,
+    .GPIO = GPIOA,
+    .GPIO_Pin = GPIO_Pin_1,
+    .Mode = GPIO_Mode_OUT,
+};
+
 static DIO_Pin PA12 = {
     .RCC_clock = RCC_AHBPeriph_GPIOA,
     .GPIO = GPIOA,
@@ -24,26 +38,17 @@ static DIO_Pin PA12 = {
     .Mode = GPIO_Mode_OUT,
 };
 
-/*
-static DIO_Pin PA13 = {
-    .RCC_clock = RCC_AHBPeriph_GPIOA,
-    .GPIO = GPIOA,
-    .GPIO_Pin = GPIO_Pin_13,
-    .Mode = GPIO_Mode_OUT,
-};
-
-static DIO_Pin PA14 = {
-    .RCC_clock = RCC_AHBPeriph_GPIOA,
-    .GPIO = GPIOA,
-    .GPIO_Pin = GPIO_Pin_14,
-    .Mode = GPIO_Mode_OUT,
-};
-*/
-
 static DIO_Pin PA15 = {
     .RCC_clock = RCC_AHBPeriph_GPIOA,
     .GPIO = GPIOA,
     .GPIO_Pin = GPIO_Pin_15,
+    .Mode = GPIO_Mode_OUT,
+};
+
+static DIO_Pin PC13 = {
+    .RCC_clock = RCC_AHBPeriph_GPIOC,
+    .GPIO = GPIOC,
+    .GPIO_Pin = GPIO_Pin_13,
     .Mode = GPIO_Mode_OUT,
 };
 
@@ -54,14 +59,12 @@ static DIO_Pin PF6 = {
     .Mode = GPIO_Mode_OUT,
 };
 
-/*
 static DIO_Pin PF7 = {
     .RCC_clock = RCC_AHBPeriph_GPIOF,
     .GPIO = GPIOF,
     .GPIO_Pin = GPIO_Pin_7,
     .Mode = GPIO_Mode_OUT,
 };
-*/
 
 void digital_init(DIO_Pin pin);
 void digital_high(DIO_Pin pin);

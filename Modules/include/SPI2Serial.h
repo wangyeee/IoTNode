@@ -5,7 +5,9 @@
 extern "C" {
 #endif
 
+#ifdef STM32F0XX
 #include "stm32f0xx.h"
+#endif
 
 void SPI2Serial_Init(void);
 
