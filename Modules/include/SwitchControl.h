@@ -36,7 +36,7 @@ typedef struct {
 #endif
 } switch_t;
 
-#define sizeof(switch_t) SWITCH_SIZE
+#define SWITCH_SIZE sizeof(switch_t)
 
 typedef enum {
     ON = 0,
@@ -49,6 +49,7 @@ void init_switchs(void);
 uint8_t switch_message_listener(node_t from, uint8_t* msg, uint8_t len);
 
 #endif /* STM32F0XX */
+
 #ifdef __cplusplus
 }
 #endif
