@@ -22,30 +22,28 @@ extern "C" {
  *  5  PF6
  *  6  PF7
  */
-
-typedef struct {
+typedef struct _switch_t {
     uint8_t id : 4;
     uint8_t status : 2;
     uint8_t enabled : 2;
-#ifdef STM32F0XX
-/* Compile for nodes */
-    DIO_Pin pin;
-#else
+    uint8_t (*pack)(struct _switch_t* sw, uint8_t* buf, uint8_t len);
+    uint8_t (*unpack)(struct _switch_t* sw, uint8_t* buf, uint8_t len);
+#ifndef STM32F0XX
 /* Compile for server */
     node_t node;
 #endif
-} switch_t;
+} __attribute__ ((__packed__)) switch_t;
 
 #define SWITCH_SIZE sizeof(switch_t)
 
 typedef enum {
-    ON = 0,
-    OFF
+    OFF = 0,
+    ON
 } switch_status;
 
 #ifdef STM32F0XX
 
-void init_switchs(void);
+void init_switches(void);
 uint8_t switch_message_listener(node_t from, uint8_t* msg, uint8_t len);
 
 #endif /* STM32F0XX */

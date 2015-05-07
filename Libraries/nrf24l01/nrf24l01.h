@@ -44,6 +44,10 @@ uint8_t nrfReadReg(uint8_t regAddr);
 uint8_t nrfWriteReg(uint8_t regAddr, uint8_t writeData);
 uint8_t nrfReadRxData(uint8_t regAddr, uint8_t *rxData, uint8_t dataLen);
 
+uint8_t nRF_Task_Init(void);
+/* task code, called in main */
+uint8_t nRF_Task_Loop(void);
+
 #ifdef __cplusplus
 }
 #endif

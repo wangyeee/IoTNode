@@ -1,4 +1,3 @@
-#include "stdio.h"
 #include "stm32f0xx.h"
 #include "utility.h"
 #include "spi.h"
@@ -7,6 +6,7 @@
 #include "gpio.h"
 #include "adc.h"
 #include "pwm.h"
+#include "iot_cfg.h"
 #include "SPI2Serial.h"
 #include "NodeLink.h"
 #include "SwitchControl.h"
@@ -32,6 +32,7 @@ void spi2serial_main(void) {
         for (;;);
     }
     nrfSetRxMode(92, 5, thisAddr);
+    init_node_link();
 
     for (;;) {
         status = SPI2Serial_Loop();
@@ -61,19 +62,28 @@ void node_main(void) {
     if (status == 1) {
         for (;;);
     }
+    printf("nRF check OK!\n");
 
     nrfSetRxMode(92, 5, thisAddr);
+    init_node_link();
+    printf("init_node_link OK!\n");
+    nRF_Task_Init();
     /* From now on, controls and sensors can be initialized. */
-    init_switchs();
+    init_switches();
+    printf("init_switches OK!\n");
 
     for (;;) {
-        /* currently nothing needs to do in the main loop. */
+        nRF_Task_Loop();
+        delay_ms(1);
     }
 }
 
 __attribute__((noreturn))
 int main(void) {
+#ifndef ENABLE_SPI2SERIAL
     node_main();
-    /* spi2serial_main(); */
+#else
+    spi2serial_main();
+#endif
     for (;;);
 }

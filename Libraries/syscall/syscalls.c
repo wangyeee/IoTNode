@@ -30,8 +30,9 @@
  ****************************************************************************
  *  History:
  *
- *  28.03.09  mifi   First Version, based on the original syscall.c from
- *                   newlib version 1.17.0
+ *  28-Mar-2009  mifi    First Version, based on the original syscall.c from
+ *                       newlib version 1.17.0
+ *  07-May-2015  Ye Wang Update write_r for transmitting debug info.
  ****************************************************************************/
 
 #include <stdlib.h>
@@ -51,9 +52,6 @@ int _open_r(struct _reent *r, const char *name, int flags, int mode){
 }
 
 int _read_r (struct _reent *r, int file, char * ptr, int len) {
-    r = r;
-    ptr = ptr;
-    len = len;
     errno = EINVAL;
     return -1;
 }
@@ -61,17 +59,17 @@ int _read_r (struct _reent *r, int file, char * ptr, int len) {
 /***************************************************************************/
 
 int _lseek_r (struct _reent *r, int file, int ptr, int dir) {
-    r = r;
-    file = file;
-    ptr = ptr;
-    dir = dir;
     return 0;
 }
 
 /***************************************************************************/
 
 int _write_r(struct _reent *r, int file, char * ptr, int len) {
-#ifndef ENABLE_SPI2SERIAL
+#ifdef ENABLE_SPI2SERIAL
+    return 0;
+#else
+    // sending debug message via STDIO_USART
+    // TODO sending debug data via SWO
     int index;
     if (!ptr) {
         return 0;
@@ -81,8 +79,6 @@ int _write_r(struct _reent *r, int file, char * ptr, int len) {
         USART_SendData(STDIO_USART, ptr[index]);
     }
     return index;
-#else
-    return 0;
 #endif
 }
 
@@ -125,9 +121,6 @@ caddr_t _sbrk_r (struct _reent *r, int incr) {
 
 int _fstat_r (struct _reent *r, int file, struct stat * st)
 {
-    r = r;
-    file = file;
-    
     memset (st, 0, sizeof (* st));
     st->st_mode = S_IFCHR;
     return 0;
@@ -137,9 +130,6 @@ int _fstat_r (struct _reent *r, int file, struct stat * st)
 
 int _isatty_r(struct _reent *r, int fd)
 {
-    r = r;
-    fd = fd;
-    
     return 1;
 }
 

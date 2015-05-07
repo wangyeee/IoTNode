@@ -66,7 +66,7 @@ SRC+=node_config.c
 SRC+=gpio.c
 SRC+=adc.c
 SRC+=pwm.c
-SRC+=ILI9163C.c
+#SRC+=ILI9163C.c
 SRC+=NodeLink.c
 SRC+=NLnRF24L01.c
 
