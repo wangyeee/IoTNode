@@ -128,7 +128,7 @@ static uint8_t switch_unpack(switch_t* sw, uint8_t* buf, uint8_t len) {
     return 0;
 }
 
-//#define TEST_SW_PACK
+#define TEST_SW_PACK
 
 int main(int argc, char** argv) {
 #ifdef TEST_SW_PACK

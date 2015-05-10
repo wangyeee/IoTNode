@@ -2,32 +2,8 @@
 
 #include "stdio.h"// debug
 
-#define NUMBER_OF_SWITCHES 7
-
 switch_t switches[NUMBER_OF_SWITCHES];
 DIO_Pin switch_mapping[NUMBER_OF_SWITCHES];
-
-/**
- * 0 1 2 3 | 4 5     | 6 7
- * id      | enabled | status
- */
-static uint8_t switch_pack(struct _switch_t* sw, uint8_t* buf, uint8_t len) {
-    if (len > 0) {
-        buf[0] = (uint8_t) ((sw->id << 4) | (sw->enabled << 2) | sw->status);
-        return 1;
-    }
-    return 0;
-}
-
-static uint8_t switch_unpack(struct _switch_t* sw, uint8_t* buf, uint8_t len) {
-    if (len > 0) {
-        sw->id = (buf[0] & 0b11110000) >> 4;
-        sw->enabled = ((buf[0] & 0b00001100) >> 2) ? ENABLED : DISABLED;
-        sw->status = (buf[0] & 0b00000011) ? ON : OFF;
-        return 1;
-    }
-    return 0;
-}
 
 void init_switches(void) {
     uint8_t i;
@@ -81,17 +57,9 @@ uint8_t switch_message_listener(node_t from, uint8_t* msg, uint8_t len) {
                     (swt.enabled ? "ENABLED" : "DISABLED"));
 
             if (swt.status && swt.enabled) {
-//                if (swt.id == 0) {
-//                    GPIO_SetBits(GPIOA, GPIO_Pin_0);
-//                } else {
-                    digital_high(switch_mapping[swt.id]);
-//                }
+                digital_high(switch_mapping[swt.id]);
             } else {
-//                if (swt.id == 0) {
-                    GPIO_ResetBits(GPIOA, GPIO_Pin_0);
-//                } else {
-                    digital_low(switch_mapping[swt.id]);
-//                }
+                digital_low(switch_mapping[swt.id]);
             }
         }
     }

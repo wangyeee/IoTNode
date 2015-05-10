@@ -12,15 +12,26 @@ void SPI2Serial_Init(void) {
 }
 
 uint8_t SPI2Serial_Loop(void) {
+    /*
+     * 0       | 1 ~ 5   | 6    | 7   | 8 ~ 23
+     * channel | address | type | seq | payload
+     */
     if (buf_size == NODE_SIZE + MSG_SIZE) {
-        node_t* desc;
-        message_t* msg;
+        node_t desc;
+        message_t msg;
+        uint8_t i;
 
-        desc = (node_t*) cmd_buf;
-        msg = (message_t*) (cmd_buf + NODE_SIZE);
-        nl_send_message(*desc, *msg);
+        desc.channel = cmd_buf[0];
+        for (i = 0; i < 5; i++) {
+            desc.addr[i] = cmd_buf[i + 1];
+        }
+        msg.type = cmd_buf[6];
+        msg.seq = cmd_buf[7];
+        for (i = 0; i < 16; i++) {
+            msg.payload[i] = cmd_buf[i + 8];
+        }
+        nl_send_message(desc, msg);
         buf_size = 0;
-
         return 1;
     }
     return 0;
